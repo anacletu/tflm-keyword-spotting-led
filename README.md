@@ -94,11 +94,17 @@ This project tackles the challenge of building a lightweight, accurate keyword s
 
 3.  **Install dependencies:**
 
-```bash
-pip install -r requirements.txt
-```
+    ```bash
+    pip install -r requirements.txt
+    ```
 
-**Obs.: TensorFlow Installation Note:**
+4.  **System requirements:**
+
+- FFmpeg (for audio processing)
+- sounddevice (for audio playback)
+
+#### TensorFlow Installation Note:
+
 The requirements.txt is configured by default for Apple Silicon (M1/M2/M3) Macs using tensorflow-macos and tensorflow-metal for GPU acceleration.
 If you are on a different system (Windows, Linux, or an Intel Mac):
 
@@ -142,7 +148,7 @@ _(This section will be filled with specific commands as the scripts are develope
 ```
 tflm-keyword-spotting-led/
 ├── data/                     # Raw and processed dataset (or symlinks, if large)
-│   ├── raw/                  # Google Speech Commands (potentially downloaded here by TFDS)
+│   ├── raw/                  # Google Speech Commands (downloaded here by TFDS)
 │   └── processed/            # MFCCs, labels, etc.
 ├── notebooks/                # Jupyter notebooks for exploration and experimentation
 ├── src/                      # Source code for the project
