@@ -93,9 +93,17 @@ This project tackles the challenge of building a lightweight, accurate keyword s
     ```
 
 3.  **Install dependencies:**
-    ```bash
-    pip install -r requirements.txt
-    ```
+
+```bash
+pip install -r requirements.txt
+```
+
+**Obs.: TensorFlow Installation Note:**
+The requirements.txt is configured by default for Apple Silicon (M1/M2/M3) Macs using tensorflow-macos and tensorflow-metal for GPU acceleration.
+If you are on a different system (Windows, Linux, or an Intel Mac):
+
+1. Comment out the lines: tensorflow-macos and tensorflow-metal.
+2. Uncomment the line: tensorflow (this provides the standard TensorFlow package, which will use your CPU or an available NVIDIA/AMD GPU if properly configured).
 
 ## How to Run
 
