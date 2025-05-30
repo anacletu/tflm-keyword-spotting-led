@@ -1,0 +1,38 @@
+# Core Machine Learning & Data Handling
+tensorflow-macos          # TensorFlow optimized for macOS (includes CPU support)
+tensorflow-metal          # Metal PluggableDevice for TensorFlow, enabling M1 GPU acceleration
+numpy                     # Fundamental package for numerical computation
+pandas                    # For data manipulation and analysis (useful for handling metadata if needed)
+
+# For other systems (Linux/Windows, or Intel Macs without dedicated Nvidia GPU):
+# tensorflow                # Standard TensorFlow package (CPU or GPU if CUDA/ROCm is set up)
+
+# Audio Processing
+librosa                   # For audio analysis, MFCC extraction
+
+# Dataset Management
+tensorflow-datasets       # For easily downloading and managing datasets like Speech Commands
+
+# Plotting & Visualization
+matplotlib                # For creating static, animated, and interactive visualizations
+seaborn                   # For statistical data visualization (e.g., nice confusion matrices)
+
+# Scikit-learn for additional utilities and metrics
+scikit-learn              # For train/test splits, metrics (precision, recall, F1, confusion matrix), and potentially simple models for comparison if desired
+
+# Optional: For Jupyter Notebooks (highly recommended for experimentation)
+# jupyterlab
+# notebook
+
+# Optional: For linting and formatting (good practice)
+# flake8
+# black
+
+# Optional: For MCU interaction (if you get to the deployment stretch goal)
+# pyserial                  # For serial communication with MCUs like Arduino/ESP32 (e.g., to send commands or receive data)
+# sounddevice               # If you want to record audio directly in Python or play back test sounds (cross-platform)
+
+# Note: Versions can be added for better reproducibility, e.g., tensorflow-macos==2.9.0
+# For now, letting pip choose the latest compatible versions is usually fine for starting.
+# You can freeze your environment later with `pip freeze > requirements.txt`
+# once you have everything working to lock down specific versions.
