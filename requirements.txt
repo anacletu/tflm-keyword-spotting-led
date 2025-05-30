@@ -7,6 +7,7 @@ pandas                    # For data manipulation and analysis (useful for handl
 
 # Audio Processing
 librosa                   # For audio analysis, MFCC extraction
+pydub                    # For audio file manipulation (e.g., converting formats, slicing)
 
 # Dataset Management
 tensorflow-datasets       # For easily downloading and managing datasets like Speech Commands
