@@ -6,23 +6,23 @@ A project to develop an efficient audio keyword spotting system capable of recog
 
 ## Table of Contents
 
-- [Project Overview](#-project-overview)
-- [Core Objectives](#-core-objectives)
-- [Dataset](#-dataset)
-- [Methodology & Pipeline](#️-methodology--pipeline)
-- [Technology Stack](#-technology-stack)
-- [Setup & Installation](#-setup--installation)
-- [How to Run](#️-how-to-run)
+- [Project Overview](#project-overview)
+- [Core Objectives](#core-objectives)
+- [Dataset](#dataset)
+- [Methodology & Pipeline](#methodology--pipeline)
+- [Technology Stack](#technology-stack)
+- [Setup & Installation](#setup--installation)
+- [How to Run](#how-to-run)
   - [Data Preparation](#data-preparation)
   - [Model Training](#model-training)
   - [Model Conversion & Quantization](#model-conversion--quantization)
   - [Evaluation](#evaluation)
-- [Project Structure](#-project-structure)
-- [Results & Performance](#-results--performance)
-- [MCU Deployment Concept](#-mcu-deployment-concept)
-- [Potential Challenges & Future Work](#-potential-challenges--future-work)
-- [License](#-license)
-- [Acknowledgements](#-acknowledgements)
+- [Project Structure](#project-structure)
+- [Results & Performance](#results--performance)
+- [MCU Deployment Concept](#mcu-deployment-concept)
+- [Potential Challenges & Future Work](#potential-challenges--future-work)
+- [License](#license)
+- [Acknowledgements](#acknowledgements)
 
 ## Project Overview
 
