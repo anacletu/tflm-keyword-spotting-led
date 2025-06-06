@@ -9,9 +9,9 @@ __pycache__/
 # VS Code
 .vscode/
 
-# TS cache files
-*.tsbuildinfo
-.ts_cache/
+# TF cache files
+*.tfbuildinfo
+.tf_cache/
 
 # Dataset files
 processed/
