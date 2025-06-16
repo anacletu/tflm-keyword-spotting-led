@@ -1,4 +1,4 @@
-# Efficient Keyword Spotting for LED Control with TensorFlow Lite for Microcontrollers 💡🎤
+# Keyword Spotting for LED Control with TensorFlow Lite for Microcontrollers
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -14,17 +14,17 @@ This project details the design, development, and evaluation of an audio keyword
 
 ## Table of Contents
 
-- [Dataset & Preprocessing](#-dataset--preprocessing)
-- [Methodology & Pipeline](#️-methodology--pipeline)
+- [Dataset & Preprocessing](#-dataset-preprocessing)
+- [Methodology & Pipeline](#️-methodology-pipeline)
 - [Technology Stack](#-technology-stack)
-- [Setup & Installation](#-setup--installation)
+- [Setup & Installation](#-setup-installation)
 - [How to Run](#️-how-to-run)
-  - [Jupyter Notebook (Training & Conversion)](#jupyter-notebook-training--conversion)
-  - [Python Sender & Arduino Sketch (Deployment Demo)](#python-sender--arduino-sketch-deployment-demo)
+  - [Jupyter Notebook (Training & Conversion)](#jupyter-notebook-training-conversion)
+  - [Python Sender & Arduino Sketch (Deployment Demo)](#python-sender-arduino-sketch-deployment-demo)
 - [Project Structure](#-project-structure)
-- [Results & Performance](#-results--performance)
+- [Results & Performance](#-results-performance)
 - [MCU Deployment Implementation](#-mcu-deployment-implementation)
-- [Challenges Encountered & Future Work](#-challenges-encountered--future-work)
+- [Challenges Encountered & Future Work](#-challenges-encountered-future-work)
 - [License](#-license)
 - [Acknowledgements](#-acknowledgements)
 
