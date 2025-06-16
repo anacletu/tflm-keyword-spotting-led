@@ -196,10 +196,6 @@ tflm-keyword-spotting-led/
 - **C Array for MCU:**
   - `model_data.cc` generated from INT8 TFLite model. Size on disk: ~207 KB (C syntax overhead). Actual model data in Flash: ~33.57 KB.
 
-<br>
-
-![Confusion Matrix for TFLite Model](image.png)
-
 ## MCU Deployment Implementation
 
 The final INT8 quantized TFLite model (`~33KB`) was deployed to an **Arduino Nano 33 BLE Sense**.
