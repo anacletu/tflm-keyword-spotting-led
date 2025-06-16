@@ -218,10 +218,7 @@ The final INT8 quantized TFLite model (`~33KB`) was deployed to an **Arduino Nan
 
 <br>
 
-<video width="640" height="360" controls>
-  <source src="./media/live_testing.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+https://github.com/user-attachments/assets/f9376b33-dca8-4acf-a709-547689b0689e
 
 ## Challenges Encountered & Future Work
 
