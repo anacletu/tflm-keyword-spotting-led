@@ -1,80 +1,88 @@
-# Efficient Keyword Spotting for LED Control with TensorFlow Lite for Microcontrollers - WIP
-
-A project to develop an efficient audio keyword spotting system capable of recognizing simple voice commands (e.g., "on", "off", "one", "two", "three") to control an RGB LED. The model is designed and optimized for deployment on resource-constrained microcontrollers (MCUs) using TensorFlow Lite for Microcontrollers (TFLM).
+# Efficient Keyword Spotting for LED Control with TensorFlow Lite for Microcontrollers 💡🎤
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## Table of Contents
-
-- [Project Overview](#project-overview)
-- [Core Objectives](#core-objectives)
-- [Dataset](#dataset)
-- [Methodology & Pipeline](#methodology--pipeline)
-- [Technology Stack](#technology-stack)
-- [Setup & Installation](#setup--installation)
-- [How to Run](#how-to-run)
-  - [Data Preparation](#data-preparation)
-  - [Model Training](#model-training)
-  - [Model Conversion & Quantization](#model-conversion--quantization)
-  - [Evaluation](#evaluation)
-- [Project Structure](#project-structure)
-- [Results & Performance](#results--performance)
-- [MCU Deployment Concept](#mcu-deployment-concept)
-- [Potential Challenges & Future Work](#potential-challenges--future-work)
-- [License](#license)
-- [Acknowledgements](#acknowledgements)
-
-## Project Overview
-
-This project tackles the challenge of building a lightweight, accurate keyword spotting (KWS) system. The goal is to classify short audio commands from a predefined vocabulary. The recognized commands are then mapped to control the state (on/off) and color (red, green, blue) of an RGB LED, demonstrating a practical application of embedded machine learning.
+This project details the design, development, and evaluation of an audio keyword spotting (KWS) system capable of recognizing a small vocabulary of spoken commands. The system is optimized for deployment on resource-constrained microcontrollers (MCUs) like the Arduino Nano 33 BLE Sense using TensorFlow Lite for Microcontrollers (TFLM). The final INT8 quantized model achieves ~88% test accuracy with a remarkable size of ~33KB. The goal was to classify short audio commands from a predefined vocabulary of 12 words (10 commands, silence, unknown). The recognized commands are then mapped to control the state and color of RGB LEDs connected to an Arduino Nano 33 BLE Sense, demonstrating a practical application of embedded machine learning.
 
 **Key Advantages of this Edge AI Approach:**
 
-- **Offline Operation:** Works without an internet connection, ensuring reliability and accessibility.
-- **Enhanced Privacy:** Voice data is processed locally on the microcontroller, not sent to cloud servers.
-- **Low Latency:** Local processing enables faster response times compared to cloud-dependent systems.
+- **Offline Operation Potential:** The final TFLM model runs on the MCU, independent of an internet connection for inference.
+- **Enhanced Privacy:** With on-device inference, sensitive audio data doesn't need to be sent to cloud servers.
+- **Low Latency:** Local inference on the MCU enables fast response times.
 
-## Core Objectives
+---
 
-1.  **Data Preparation:** Process and prepare the Google Speech Commands dataset for training, focusing on a selected vocabulary.
-2.  **Model Development:** Design and train a Convolutional Neural Network (CNN) suitable for audio classification.
-3.  **Optimization for MCUs:** Convert the trained model to TensorFlow Lite format and apply post-training quantization (int8) to minimize size and computational cost.
-4.  **Performance Analysis:** Evaluate the model's accuracy, size, and the impact of quantization.
-5.  **Deployment Feasibility:** Discuss and (if time permits) demonstrate the deployment of the model on a target microcontroller (e.g., Arduino Nano 33 BLE Sense, ESP32).
+## Table of Contents
 
-## Dataset
+- [Dataset & Preprocessing](#-dataset--preprocessing)
+- [Methodology & Pipeline](#️-methodology--pipeline)
+- [Technology Stack](#-technology-stack)
+- [Setup & Installation](#-setup--installation)
+- [How to Run](#️-how-to-run)
+  - [Jupyter Notebook (Training & Conversion)](#jupyter-notebook-training--conversion)
+  - [Python Sender & Arduino Sketch (Deployment Demo)](#python-sender--arduino-sketch-deployment-demo)
+- [Project Structure](#-project-structure)
+- [Results & Performance](#-results--performance)
+- [MCU Deployment Implementation](#-mcu-deployment-implementation)
+- [Challenges Encountered & Future Work](#-challenges-encountered--future-work)
+- [License](#-license)
+- [Acknowledgements](#-acknowledgements)
 
-- **Source:** [Google Speech Commands Dataset v0.02](https://www.tensorflow.org/datasets/catalog/speech_commands) (via TensorFlow Datasets).
-- **Selected Vocabulary:**
-  - `"one"` (mapped to LED Color: RED)
-  - `"two"` (mapped to LED Color: GREEN)
-  - `"three"` (mapped to LED Color: BLUE)
-  - `"on"` (mapped to LED State: ON)
-  - `"off"` (mapped to LED State: OFF)
-  - `"_silence_"` (background noise)
-  - `"_unknown_"` (other words outside the target vocabulary)
-- **Preprocessing:** Audio clips are 1 second long, sampled at 16kHz. Features are extracted as Mel-Frequency Cepstral Coefficients (MFCCs).
+---
+
+## Dataset & Preprocessing
+
+- **Source:** Google Speech Commands Dataset **v0.0.3** (via TensorFlow Datasets). This version provides 12 pre-defined classes: 10 core commands (`down`, `go`, `left`, `no`, `off`, `on`, `right`, `stop`, `up`, `yes`), `_silence_`, and `_unknown_`.
+- **Challenge:** The 'train' split exhibited severe class imbalance (e.g., `_unknown_`: ~54k samples, `_silence_`: ~670 samples, commands: ~3k each).
+- **Solution - Data Rebalancing (Training Set Only):**
+  - `_unknown_` class was undersampled (e.g., to ~10,000 samples).
+  - `_silence_` class was oversampled (e.g., repeated to ~1,300-3,000 samples).
+  - Command words were retained.
+  - This resulted in a more balanced training set of ~42,000 samples. Validation and test sets were kept in their natural imbalanced state.
+- **Feature Extraction (MFCCs):**
+  - Audio (16kHz) was processed to extract Mel-Frequency Cepstral Coefficients.
+  - Final parameters used with `librosa` (Python) for training the best model:
+    - `n_mfcc`: 13
+    - `n_mels`: **40** (Crucial change after identifying on-device memory constraints for `ArduinoMFCC`)
+    - `n_fft`: 512 (32ms window)
+    - `hop_length`: 160 (10ms hop)
+    - Window: Hann
+    - This resulted in a `(13, 100, 1)` input shape per 1-second audio clip for the CNN.
+  - Audio was normalized to `[-1.0, 1.0]` before MFCC calculation.
 
 ## Methodology & Pipeline
 
-1.  **Data Loading & Preprocessing:** Load audio, segment silence, balance classes, extract MFCCs.
-2.  **Model Architecture:** A compact CNN designed for audio (e.g., 1D/2D Conv layers, Pooling, Dense layers).
-3.  **Training:** Using TensorFlow/Keras, with appropriate callbacks for model saving and learning rate scheduling if needed.
-4.  **Evaluation:** Metrics include accuracy, precision, recall, F1-score, and confusion matrix.
-5.  **TFLM Conversion:**
-    - Convert Keras model to `.tflite` format.
-    - Apply int8 post-training quantization using a representative dataset.
-    - Analyze model size reduction and performance trade-offs.
+1.  **Data Loading & Preprocessing (Python):** Loaded audio using `tensorflow_datasets`, applied custom data rebalancing for the training set, normalized audio, and extracted MFCCs using `librosa`.
+2.  **Model Architecture (Keras):** A compact CNN (with Dropout layers) using `Conv2D`, `MaxPooling2D`, `GlobalAveragePooling2D`, and `Dense` layers was developed.
+3.  **Training (Python/Keras):** Trained using Adam optimizer, `sparse_categorical_crossentropy` loss, and callbacks (`ModelCheckpoint`, `EarlyStopping`, `ReduceLROnPlateau`). Seeds were set for reproducibility.
+4.  **Evaluation (Python/Keras & TFLite):** Full evaluation with accuracy, classification reports, and confusion matrices for the Keras model and the subsequently converted TFLite INT8 model.
+5.  **TFLM Conversion (Python, performed on Colab):**
+    - Best Keras model converted to Float32 TFLite.
+    - Float32 TFLite model quantized to INT8 using post-training quantization with a representative dataset (300 samples from the training set). `target_spec.supported_ops` set to `[tf.lite.OpsSet.TFLITE_BUILTINS_INT8]`.
+6.  **C Array Generation:** The INT8 TFLite model was converted to a C byte array using `xxd` for embedding into the Arduino sketch.
+7.  **MCU Sketch Development (Arduino C++):**
+    - Developed sketch for Arduino Nano 33 BLE Sense.
+    - Implemented serial communication protocol ('S'/'R' handshake) to receive quantized INT8 MFCC data from PC.
+    - Loaded TFLM model from C array, set up interpreter and tensor arena.
+    - Performed inference on received MFCCs.
+    - Controlled RGB LEDs based on recognized keywords above a confidence threshold.
+8.  **PC-MCU Interaction Script (Python):**
+    - Developed a Python script to:
+      - Record live audio from PC mic OR load pre-saved keyword MFCCs (`.npy` files).
+      - Calculate MFCCs (`librosa`) for live audio.
+      - Quantize float32 MFCCs to INT8 using model's input scale/zero-point.
+      - Send data to Arduino via Serial and display Arduino's response.
 
 ## Technology Stack
 
-- **Programming Language:** Python 3.x
-- **Core ML Libraries:** TensorFlow, Keras
-- **Audio Processing:** Librosa
-- **Data Handling:** NumPy
-- **Plotting & Visualization:** Matplotlib, Seaborn
-- **Dataset Management:** TensorFlow Datasets
-- **(Optional for MCU):** Arduino IDE / PlatformIO, C/C++ for TFLM runtime.
+- **Programming Languages:** Python 3.11, C++ (for Arduino)
+- **Core ML Libraries:** TensorFlow (v2.16.2), Keras API
+- **Audio Processing (Python):** Librosa, SoundDevice (for live recording)
+- **Data Handling (Python):** NumPy
+- **Plotting & Visualization (Python):** Matplotlib, Seaborn
+- **Dataset Management (Python):** TensorFlow Datasets
+- **MCU Development:** Arduino IDE, `Chirale_TensorFlowLite`
+- **Serial Communication (Python):** PySerial
 
 ## Setup & Installation
 
@@ -85,133 +93,155 @@ This project tackles the challenge of building a lightweight, accurate keyword s
     cd tflm-keyword-spotting-led
     ```
 
-2.  **Create and activate a virtual environment (recommended):**
+2.  **Create and activate a Python virtual environment (recommended):**
 
     ```bash
-    python -m venv venv
-    source venv/bin/activate  # On Windows: venv\Scripts\activate
+    # Ensure Python 3.11 is available
+    python3.11 -m venv venv
+    source venv/bin/activate  # On macOS/Linux
+    # venv\Scripts\activate # On Windows
     ```
 
-3.  **Install dependencies:**
+3.  **Install Python dependencies:**
 
     ```bash
     pip install -r requirements.txt
     ```
 
-4.  **System requirements:**
+    - **System requirements for Python audio:**
+      - `sounddevice` may require system audio libraries (e.g., PortAudio: `brew install portaudio` on macOS, `sudo apt-get install libportaudio2 libasound-dev` on Debian/Ubuntu).
+      - `librosa` (via `soundfile`) may require `libsndfile` (`brew install libsndfile` or `sudo apt-get install libsndfile1`).
 
-- FFmpeg (for audio processing)
-- sounddevice (for audio playback)
+4.  **TensorFlow Installation Note:**
+    The `requirements.txt` should be configured for your system (e.g., Apple Silicon `tensorflow-macos` and `tensorflow-metal`, or standard `tensorflow` for other systems).
 
-#### TensorFlow Installation Note:
-
-The requirements.txt is configured by default for Apple Silicon (M1/M2/M3) Macs using tensorflow-macos and tensorflow-metal for GPU acceleration.
-If you are on a different system (Windows, Linux, or an Intel Mac):
-
-1. Comment out the lines: tensorflow-macos and tensorflow-metal.
-2. Uncomment the line: tensorflow (this provides the standard TensorFlow package, which will use your CPU or an available NVIDIA/AMD GPU if properly configured).
+5.  **Arduino IDE Setup:**
+    - Install Arduino IDE.
+    - Install "Arduino Mbed OS Nano Boards" core via Boards Manager.
+    - Install the TFLM library (e.g., `Chirale_TensorFlowLite` via ZIP or a working TFLM solution) via Library Manager or by adding the library to the Arduino libraries folder.
+    - Place `model_data.h`, `model_data.cc`, `model_settings.h`, `model_settings.cpp` in your Arduino sketch folder.
 
 ## How to Run
 
-_(This section will be filled with specific commands as the scripts are developed)_
+### Jupyter Notebook (Training & Initial TFLite Conversion)
 
-### Data Preparation
+1.  Open the main Jupyter Notebook (e.g., in `notebooks/`).
+2.  Run cells sequentially to perform data loading, preprocessing, model training, evaluation, and TFLite conversion. The notebook also contains code to save specific MFCC samples as `.npy` files to `utils/test_samples_for_arduino/`.
 
-```bash
-# Example:
-# python src/prepare_data.py --data_dir datasets/speech_commands --output_dir datasets/processed
-```
+### Python Sender & Arduino Sketch (Deployment Demo)
 
-### Model Training
+1.  **Arduino:**
 
-```bash
-# Example:
-# python src/train_model.py --processed_data_dir datasets/processed --model_output_dir models
-```
+    - Open the Arduino sketch (e.g., `arduino_sketch_files/KeywordSpotterNano_SERIAL/KeywordSpotterNano.ino`) in the Arduino IDE.
+    - Ensure `model_data.cc` and `model_settings.h/.cpp` are correctly populated and in the sketch folder.
+    - Select "Arduino Nano 33 BLE" board and the correct port.
+    - Compile and upload the sketch to your Arduino Nano 33 BLE Sense.
+    - (Optional) Open Arduino Serial Monitor briefly to check setup messages, then CLOSE IT.
 
-### Model Conversion & Quantization
+2.  **Python Sender Script:**
 
-```bash
-# Example:
-# python src/convert_to_tflite.py --keras_model_path models/keyword_model.h5 --tflite_output_dir models
-```
+    - Navigate to the directory containing `send_mfcc_to_arduino.py` (e.g., `utils/`).
+    - Update `SERIAL_PORT` in the script if needed.
+    - Run from terminal:
 
-### Evaluation
+      ```bash
+      # To send a pre-saved MFCC sample (e.g., for "on")
+      python send_mfcc_to_arduino.py on
 
-```bash
-# Example:
-# python src/evaluate_model.py --tflite_model_path models/keyword_model_quant.tflite --test_data_dir datasets/processed/test
-```
+      # To record live audio from PC mic, then process and send
+      python send_mfcc_to_arduino.py record
+      # (Speak keyword when prompted)
+      ```
+
+    - Observe the Python console for Arduino's responses and the LEDs on the Arduino board.
 
 ## Project Structure
 
 ```
 tflm-keyword-spotting-led/
-├── data/                     # Raw and processed dataset (or symlinks, if large)
-│   ├── raw/                  # Google Speech Commands (downloaded here by TFDS)
-│   └── processed/            # MFCCs, labels, etc.
-├── notebooks/                # Jupyter notebooks for exploration and experimentation
-├── src/                      # Source code for the project
-│   ├── prepare_data.py       # Script for data loading and preprocessing
-│   ├── model_architecture.py # Defines the CNN model
-│   ├── train_model.py        # Script for training the model
-│   ├── convert_to_tflite.py  # Script for TFLM conversion and quantization
-│   ├── evaluate_model.py     # Script for evaluating model performance
-│   └── utils.py              # Utility functions (e.g., audio processing, plotting)
-├── models/                   # Saved trained models (Keras .h5, .tflite)
-├── mcu_deployment/           # Code for microcontroller deployment (e.g., Arduino sketch)
-│   └── keyword_spotting_led/
-├── requirements.txt          # Python dependencies
-├── LICENSE                   # Project license file
-└── README.md                 # This file
+├── notebooks/ # Jupyter notebook for development
+├── data/ # (Potentially for storing raw dataset if not using TFDS default path)
+├── models/ # Saved Keras models (.keras)
+├── tflite_models/ # Saved TFLite models (.tflite)
+├── arduino_sketch_files/ # Arduino deployment code
+│ └── KeywordSpotterNano_SERIAL/
+│   ├── KeywordSpotterNano_SERIAL.ino
+│   ├── model_data.h
+│   ├── model_data.cc
+│   ├── model_settings.h
+│   └── model_settings.cpp
+├── utils/ # Utility scripts
+│ ├── send_mfcc_to_arduino.py
+│ └── test_samples_for_arduino/ # .npy files of pre-processed MFCCs
+│   ├── sample_mfcc_on.npy
+│   └── ...
+├── requirements.txt # Python dependencies
+├── .gitignore
+├── LICENSE # Project license file
+└── README.md # This file
 ```
 
 ## Results & Performance
 
-_(This section will be updated with key performance metrics once the model is trained and evaluated)_
+- **Dataset Rebalancing:** Crucial for overcoming bias towards the `_unknown_` class. Training set composition: `~30k` total command words (10 classes), `~10k` `_unknown_` samples (undersampled), `~1.3k` `_silence_` samples (oversampled).
+- **Keras Model (CNN with GlobalAveragePooling & Dropout):**
+  - Trained on rebalanced data with MFCCs (13 coeffs from 40 Mels, 100 frames).
+  - **Test Accuracy (evaluated on naturally imbalanced test set): ~88%**.
+  - Saved as: `models/final_model_test_acc_0.88.keras` (Size: 354.35 KB)
+- **Float32 TFLite Model:**
+  - Size: 104.43 KB
+  - Test Accuracy (Python TFLite interpreter): ~87.9%
+- **INT8 Quantized TFLite Model:**
+  - Representative dataset: 300 samples from training data.
+  - **Size: 33.57 KB** (~67.9% reduction from Float32 TFLite)
+  - **Test Accuracy (Python TFLite interpreter): ~87.5%** (showing minimal to no accuracy loss).
+- **C Array for MCU:**
+  - `model_data.cc` generated from INT8 TFLite model. Size on disk: ~207 KB (C syntax overhead). Actual model data in Flash: ~33.57 KB.
 
-- **Baseline Model (Float32):**
-  - Accuracy: TBD
-  - Size: TBD MB
-- **Quantized Model (INT8):**
-  - Accuracy: TBD
-  - Size: TBD KB
-  - Accuracy Drop (if any): TBD %
-- **Confusion Matrix:** (Image or textual representation to be added)
+<br>
 
-## MCU Deployment Concept
+![Confusion Matrix for TFLite Model](image.png)
 
-The final quantized `.tflite` model is intended for deployment on a microcontroller such as an **Arduino Nano 33 BLE Sense** or an **ESP32**.
+## MCU Deployment Implementation
 
-**Pipeline on MCU:**
+The final INT8 quantized TFLite model (`~33KB`) was deployed to an **Arduino Nano 33 BLE Sense**.
 
-1.  Audio input from an onboard or external microphone.
-2.  (On-device) MFCC feature extraction from audio frames.
-3.  Inference using the TFLM interpreter with the quantized model.
-4.  Post-processing of model output to determine the detected keyword.
-5.  Control an RGB LED based on the detected command.
+- **Method:** The PC handles audio input (live via microphone or from pre-saved MFCCs) and feature processing (MFCC calculation using `librosa`, then quantization to INT8). These INT8 MFCC bytes are sent to the Arduino via Serial.
+- **Arduino Sketch:**
+  - Receives INT8 MFCC data using a robust 'S'/'R' (Start/Ready) handshake protocol.
+  - Performs inference using the TFLM interpreter.
+  - Identifies the keyword with the highest score above a confidence threshold (`g_recognition_threshold_int8` in `model_settings.h`, calibrated to ~70% float probability).
+  - Controls connected Red, Green, and Blue LEDs based on recognized keywords (e.g., "up" -> Red, "on" -> Green).
+  - Sends acknowledgment (ACK_OK, ACK_FAIL, ACK_LOW) and prediction back to PC.
+- **Performance:** Inference duration on Nano 33 BLE Sense for the INT8 model was observed to be ~300-350ms (can be further optimized). The `kTensorArenaSize` was set to 45KB.
+- **Outcome:** The system successfully demonstrates keyword recognition on the MCU with visual LED feedback.
 
-**(Details of actual deployment, if completed, will be added here.)**
+![Demo of LED control](./media/live_testing.mp4)
 
-## Potential Challenges & Future Work
+## Challenges Encountered & Future Work
 
 - **Challenges:**
-  - Achieving high accuracy with a very small model size.
-  - Robustness to real-world noise.
-  - On-device feature extraction efficiency.
-  - Class imbalance for `_unknown_` and `_silence_`.
+
+  - **Class Imbalance:** The original Speech Commands v0.0.3 `_unknown_` class was massive, requiring significant undersampling for effective training. `_silence_` required oversampling.
+  - **Training Stability:** Initial training runs (especially with class weights on the original imbalanced set) were unstable. Iterative adjustments to learning rate, data rebalancing, and model architecture (using Global Average Pooling and Dropout) were key.
+  - **Local TFLite Conversion:** Encountered persistent kernel crashes on macOS M1 when converting Keras to TFLite. This was pragmatically resolved by performing the TFLite conversion on Google Colab.
+  - **Serial Data Transfer to MCU:** Initial attempts to send MFCC data to Arduino resulted in incomplete data reception. This was resolved by implementing a paced, chunked sending strategy from Python and an 'S'/'R' handshake protocol.
+  - **(Briefly) On-Device MFCC Attempts:** Initial exploration of on-device MFCC libraries (`ArduinoMFCC`) highlighted significant challenges in matching `librosa`'s feature output numerically and potential memory/performance issues on the MCU, leading to the strategic decision to focus on PC-based MFCCs for this project's demo.
+
 - **Future Work:**
-  - Implement on-device MFCC extraction for a fully standalone MCU application.
-  - Expand the vocabulary.
-  - Investigate more advanced quantization techniques (e.g., quantization-aware training).
-  - Improve noise robustness (e.g., data augmentation with noise, noise reduction algorithms).
-  - Real-time audio processing pipeline on the MCU.
+  - **Robust On-Device Feature Extraction:** Integrate and optimize an efficient C++ MFCC library (like a refined `ArduinoMFCC`, TFLM Microfrontend + DCT, or `EloquentTinyML`) on the Nano for a fully standalone system. This would involve retraining the model on features generated by that specific on-device library to ensure numerical consistency.
+  - **Voice Activity Detection (VAD):** Implement VAD on the MCU (or PC for current setup) to process audio only when speech is detected, improving responsiveness and power efficiency.
+  - **Model Optimization:** Explore more advanced TFLM-specific model architectures or further compression (e.g., Quantization-Aware Training, pruning) for even smaller/faster models.
+  - **Noise Robustness:** Incorporate data augmentation with various noise types during training.
+  - **Expand Vocabulary & Application:** Add more keywords and more complex LED control patterns or other MCU actions.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the `LICENSE` file for details.
 
 ## Acknowledgements
 
-- [Google Speech Commands Dataset](https://www.tensorflow.org/datasets/catalog/speech_commands) creators for providing the audio data.
-- The TensorFlow and TensorFlow Lite development teams for their incredible open-source machine learning libraries.
+- **Google Speech Commands Dataset** creators for providing the audio data.
+- The **TensorFlow and TensorFlow Lite development teams** for their open-source machine learning libraries.
+- Libraries used: `Librosa`, `SoundDevice`, `PySerial`, `NumPy`, `Matplotlib`, `Seaborn`.
+- The **Arduino community** and developers of MCU libraries.
