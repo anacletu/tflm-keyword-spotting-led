@@ -216,7 +216,12 @@ The final INT8 quantized TFLite model (`~33KB`) was deployed to an **Arduino Nan
 - **Performance:** Inference duration on Nano 33 BLE Sense for the INT8 model was observed to be ~300-350ms (can be further optimized). The `kTensorArenaSize` was set to 45KB.
 - **Outcome:** The system successfully demonstrates keyword recognition on the MCU with visual LED feedback.
 
-![Demo of LED control](./media/live_testing.mp4)
+<br>
+
+<video width="640" height="360" controls>
+  <source src="./media/live_testing.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
 ## Challenges Encountered & Future Work
 
