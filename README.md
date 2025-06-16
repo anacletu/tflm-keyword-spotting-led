@@ -14,19 +14,17 @@ This project details the design, development, and evaluation of an audio keyword
 
 ## Table of Contents
 
-- [Dataset & Preprocessing](#-dataset-preprocessing)
-- [Methodology & Pipeline](#️-methodology-pipeline)
-- [Technology Stack](#-technology-stack)
-- [Setup & Installation](#-setup-installation)
-- [How to Run](#️-how-to-run)
-  - [Jupyter Notebook (Training & Conversion)](#jupyter-notebook-training-conversion)
-  - [Python Sender & Arduino Sketch (Deployment Demo)](#python-sender-arduino-sketch-deployment-demo)
-- [Project Structure](#-project-structure)
-- [Results & Performance](#-results-performance)
-- [MCU Deployment Implementation](#-mcu-deployment-implementation)
-- [Challenges Encountered & Future Work](#-challenges-encountered-future-work)
-- [License](#-license)
-- [Acknowledgements](#-acknowledgements)
+- [Dataset & Preprocessing](#dataset--preprocessing)
+- [Methodology & Pipeline](#methodology--pipeline)
+- [Technology Stack](#technology-stack)
+- [Setup & Installation](#setup--installation)
+- [How to Run](#how-to-run)
+- [Project Structure](#project-structure)
+- [Results & Performance](#results--performance)
+- [MCU Deployment Implementation](#mcu-deployment-implementation)
+- [Challenges Encountered & Future Work](#challenges-encountered--future-work)
+- [License](#license)
+- [Acknowledgements](#acknowledgements)
 
 ---
 
