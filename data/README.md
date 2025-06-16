@@ -20,4 +20,4 @@ The Jupyter notebooks in this project are configured to automatically download a
 2. Download the dataset if not already present
 3. Prepare and load the data into TensorFlow Dataset objects
 
-The first time you run the notebook, it may take several minutes to download and prepare the dataset. Make sure you have the system requirements described on the main [README file](../README.md).
+The first time you run the notebook, it may take several minutes to download and prepare the dataset.
