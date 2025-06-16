@@ -72,15 +72,15 @@ void setup()
   }
   Serial.println("Model loaded successfully.");
 
-  static tflite::MicroMutableOpResolver<10> op_resolver; // NOTE: Currently using 8 ops. Increase <N> if adding more.
-  op_resolver.AddConv2D();                               // For layers.Conv2D
-  op_resolver.AddMaxPool2D();                            // For layers.MaxPooling2D
-  op_resolver.AddMean();                                 // GlobalAveragePooling2D often uses this
-  op_resolver.AddFullyConnected();                       // For layers.Dense
-  op_resolver.AddSoftmax();                              // For output activation
-  op_resolver.AddQuantize();                             // For INT8 models (input/output quantization)
-  op_resolver.AddDequantize();                           // For INT8 models (if any op needs float temporarily)
-  op_resolver.AddReshape();                              // Often used implicitly or by Flatten/GAP
+  static tflite::MicroMutableOpResolver<10> op_resolver;
+  op_resolver.AddConv2D();         // For layers.Conv2D
+  op_resolver.AddMaxPool2D();      // For layers.MaxPooling2D
+  op_resolver.AddMean();           // GlobalAveragePooling2D often uses this
+  op_resolver.AddFullyConnected(); // For layers.Dense
+  op_resolver.AddSoftmax();        // For output activation
+  op_resolver.AddQuantize();       // For INT8 models (input/output quantization)
+  op_resolver.AddDequantize();     // For INT8 models (if any op needs float temporarily)
+  op_resolver.AddReshape();        // Often used implicitly or by Flatten/GAP
 
   // Build an interpreter
   static tflite::MicroInterpreter static_interpreter(
@@ -173,7 +173,6 @@ void setup()
 // LOOP FUNCTION
 int8_t incoming_mfcc_buffer[g_input_tensor_size]; // g_input_tensor_size is constexpr from .h
 
-// Arduino Sketch - Modified loop()
 void loop()
 {
   static unsigned long last_loop_print_time = 0;

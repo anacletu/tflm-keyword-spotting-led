@@ -1,3 +1,8 @@
+/*  Copyright 2025 github/anacletu
+    Project: tflm-keyword-spotting-led
+    Licensed under the MIT License
+*/
+
 /* model_data.h */
 #ifndef MODEL_DATA_H_
 #define MODEL_DATA_H_
