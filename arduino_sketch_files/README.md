@@ -40,7 +40,7 @@ Due to challenges and time constraints in perfectly matching on-device MFCC (Mel
 3.  **Verify Constants in `model_settings.cpp`:**
     - Ensure `g_input_scale`, `g_input_zero_point`, `g_output_scale`, `g_output_zero_point`, `g_category_labels`, and other dimension constants precisely match the INT8 TFLite model that `model_data.cc` was generated from.
     - Check that `g_recognition_threshold_int8` is set to a sensible value (e.g., `51` for ~70% float probability with the model's output parameters).
-4.  **Verify Model Array Name:** In `KeywordSpotterNano_SERIAL.ino`, ensure the `tflite::GetModel()` call uses the correct C array name from `model_data.cc` (e.g., `keyword_spotting_model_88_int8_tflite`).
+4.  **Verify Model Array Name:** In `KeywordSpotterNano_SERIAL.ino`, ensure the `tflite::GetModel()` call uses the correct C array name from `model_data.cc` (e.g., `keyword_spotting_model_87_int8_tflite`).
 5.  **Configure Board & Port in Arduino IDE:**
     - **Tools > Board > Arduino Mbed OS Nano Boards > Arduino Nano 33 BLE**.
     - Select the correct **Tools > Port** for your connected Nano.
