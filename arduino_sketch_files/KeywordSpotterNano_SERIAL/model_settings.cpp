@@ -7,9 +7,9 @@
 #include "model_settings.h"
 
 // --- UPDATED VALUES from new Python TFLite INT8 evaluation ---
-// Input details: 'quantization': (2.7671010494232178, 64)
-const float g_input_scale = 2.7671010494232178f; // Added 'f', using full precision
-const int g_input_zero_point = 64;
+// Input details: 'quantization': (3.016157627105713, 63)
+const float g_input_scale = 3.016157627105713f; // Added 'f', using full precision
+const int g_input_zero_point = 63;
 
 // Output details: 'quantization': (0.00390625, -128)
 const float g_output_scale = 0.00390625f;
