@@ -7,12 +7,12 @@ import sounddevice as sd # For recording
 import librosa           # For MFCC calculation
 
 # --- Configuration Parameters ---
-SERIAL_PORT = '/dev/cu.usbmodem2201'  # Replace with your Arduino's serial port
+SERIAL_PORT = '/dev/cu.usbmodem2201'  # Replace if Arduino's serial port differs
 BAUD_RATE = 115200
 
 # Model Input Quantization Parameters (from TFLite input_details)
-MODEL_INPUT_SCALE = 2.7671010494232178 
-MODEL_INPUT_ZERO_POINT = 64             
+MODEL_INPUT_SCALE = 3.016157627105713 
+MODEL_INPUT_ZERO_POINT = 63
 
 # Model Input Dimensions & Audio Parameters
 N_MFCC = 13
