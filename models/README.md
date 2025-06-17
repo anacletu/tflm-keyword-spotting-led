@@ -5,7 +5,7 @@ This directory contains Keras models saved during the development of the keyword
 ## Contents:
 
 - Models are saved in the Keras v3 native format (a directory structure zipped into a `.keras` file).
-- Filenames typically indicate the model architecture, key training parameters/data, and the test accuracy achieved (e.g., `final_model_test_acc_0.86.keras`).
+- Filenames typically indicate the model architecture, key training parameters/data, and the test accuracy achieved (e.g., `final_model_test_acc_0.87.keras`).
 
 ## Generation:
 
@@ -16,7 +16,7 @@ This directory contains Keras models saved during the development of the keyword
 ## Note on Reproducibility:
 
 - Due to the inherent stochasticity (randomness) in neural network training (e.g., weight initialization, data shuffling, dropout), running the training notebook multiple times, even with the same settings and random seeds, may result in models with slightly different final weights and performance metrics.
-- The models stored here represent specific training runs. The primary model used for generating the final TFLite versions and reported results is typically the one achieving the highest reproducible test accuracy (e.g., `final_model_test_acc_0.88.keras` which was trained on Colab and then evaluated).
+- The models stored here represent specific training runs. The primary model used for generating the final TFLite versions and reported results is typically the one achieving the highest reproducible test accuracy (e.g., `final_model_test_acc_0.87.keras` which was trained on Colab and then evaluated).
 
 ## Usage:
 
