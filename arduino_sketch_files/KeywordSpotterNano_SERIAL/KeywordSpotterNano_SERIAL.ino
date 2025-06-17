@@ -60,7 +60,7 @@ void setup()
   Serial.println("Initializing TFLM System...");
 
   // Load the model from the C array (defined in model_data.cc)
-  model = tflite::GetModel(keyword_spotting_model_86_int8_tflite);
+  model = tflite::GetModel(keyword_spotting_model_0_87_int8_tflite);
   if (model->version() != TFLITE_SCHEMA_VERSION)
   {
     Serial.print("ERROR: Model schema version mismatch! Model: ");
