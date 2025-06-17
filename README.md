@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-This project details the design, development, and evaluation of an audio keyword spotting (KWS) system capable of recognizing a small vocabulary of spoken commands. The system is optimized for deployment on resource-constrained microcontrollers (MCUs) like the Arduino Nano 33 BLE Sense using TensorFlow Lite for Microcontrollers (TFLM). The final INT8 quantized model achieves ~88% test accuracy with a remarkable size of ~33KB. The goal was to classify short audio commands from a predefined vocabulary of 12 words (10 commands, silence, unknown). The recognized commands are then mapped to control the state and color of RGB LEDs connected to an Arduino Nano 33 BLE Sense, demonstrating a practical application of embedded machine learning.
+This project details the design, development, and evaluation of an audio keyword spotting (KWS) system capable of recognizing a small vocabulary of spoken commands. The system is optimized for deployment on resource-constrained microcontrollers (MCUs) like the Arduino Nano 33 BLE Sense using TensorFlow Lite for Microcontrollers (TFLM). The final INT8 quantized model achieves ~87.6% test accuracy with a remarkable size of ~33KB. The goal was to classify short audio commands from a predefined vocabulary of 12 words (10 commands, silence, unknown). The recognized commands are then mapped to control the state and color of RGB LEDs connected to an Arduino Nano 33 BLE Sense, demonstrating a practical application of embedded machine learning.
 
 **Key Advantages of this Edge AI Approach:**
 
@@ -184,17 +184,16 @@ tflm-keyword-spotting-led/
 - **Dataset Rebalancing:** Crucial for overcoming bias towards the `_unknown_` class. Training set composition: `~30k` total command words (10 classes), `~10k` `_unknown_` samples (undersampled), `~1.3k` `_silence_` samples (oversampled).
 - **Keras Model (CNN with GlobalAveragePooling & Dropout):**
   - Trained on rebalanced data with MFCCs (13 coeffs from 40 Mels, 100 frames).
-  - **Test Accuracy (evaluated on naturally imbalanced test set): ~88%**.
-  - Saved as: `models/final_model_test_acc_0.88.keras` (Size: 354.35 KB)
+  - **Test Accuracy (evaluated on naturally imbalanced test set): ~87%**.
+  - Saved as: `models/final_model_test_acc_0.87.keras` (Size: 354.33 KB)
 - **Float32 TFLite Model:**
-  - Size: 104.43 KB
-  - Test Accuracy (Python TFLite interpreter): ~87.9%
+  - Size: 104.36 KB
 - **INT8 Quantized TFLite Model:**
   - Representative dataset: 300 samples from training data.
-  - **Size: 33.57 KB** (~67.9% reduction from Float32 TFLite)
-  - **Test Accuracy (Python TFLite interpreter): ~87.5%** (showing minimal to no accuracy loss).
+  - **Size: 33.50 KB** (~67.9% reduction from Float32 TFLite)
+  - **Test Accuracy: ~87.5%** (showing minimal to no accuracy loss).
 - **C Array for MCU:**
-  - `model_data.cc` generated from INT8 TFLite model. Size on disk: ~207 KB (C syntax overhead). Actual model data in Flash: ~33.57 KB.
+  - `model_data.cc` generated from INT8 TFLite model. Size on disk: ~221 KB (C syntax overhead). Actual model data in Flash: ~33.50 KB.
 
 ## MCU Deployment Implementation
 
